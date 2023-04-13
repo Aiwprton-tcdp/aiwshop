@@ -1,0 +1,122 @@
+<style scoped></style>
+
+<template>
+<div class="flex text-sm sm:text-base">
+  <Navigation ref="nav" />
+  
+  <div class="flex items-center">
+    <a href="" class="flex text-white hover:text-gray-100 bg-green-400 hover:bg-green-500 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700">
+      <span class="font-bold">&#10010;&nbsp;&nbsp;</span>User
+    </a>
+  </div>
+</div>
+
+<div class="relative overflow-x-auto space-y-4">
+  <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <tr>
+        <th scope="col" class="px-6 py-3">Id</th>
+        <th scope="col" class="px-6 py-3">Nickname</th>
+        <th scope="col" class="px-6 py-3">Email</th>
+        <th scope="col" class="px-6 py-3">Rolename</th>
+        <th scope="col" class="px-6 py-3">Created at</th>
+        <th scope="col" class="px-6 py-3">Actions</th>
+      </tr>
+    </thead>
+    <tbody v-for="u in users">
+      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+        <td class="px-6 py-4">
+          <button @click="ShowEdit(u)">&#x270E;</button>
+          {{ u.id }}
+        </td>
+        <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+          {{ u.name }}
+        </td>
+        <td class="px-6 py-4">{{ u.email }}</td>
+        <td class="px-6 py-4">{{ u.rolename }}</td>
+        <td class="px-6 py-4">{{ u.created_at }}</td>
+        <td class="px-6 py-4">
+          <button @click="LoginToAnother(u.id)">Auth</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <Pagination ref="PaginationTemplate" @invoke="GetUsers" />
+</div>
+</template>
+
+<script>
+import { inject } from 'vue'
+import { login_to_another } from '@/utils/auth'
+import Navigation from '@/components/pages/dashboard/templates/Navigation.vue'
+import Pagination from '@/components/templates/Pagination.vue'
+
+export default {
+  name: 'D_Users',
+  components: {
+    Navigation,
+    Pagination,
+  },
+  data() {
+    return {
+      users: Array(),
+    }
+  },
+  setup() {
+    const errored = inject('errored')
+    const loading = inject('loading')
+    const updateStatesData = inject('updateStatesData')
+
+    return {
+      errored,
+      loading,
+      updateStatesData,
+    }
+  },
+  mounted() {
+    this.GetUsers()
+    this.$refs.nav.data = ['Пользователи']
+  },
+  methods: {
+    GetUsers(page = 1) {
+      this.loading = true
+
+      this.ax.get(`users?page=${page}&limit=120`)
+        .then(r => {
+          let p = r.data.data
+          this.users = p.data
+          this.PreparePagination(p)
+        }).catch(error => {
+          console.log(error)
+          this.errored = true
+        }).finally(() => this.loading = false)
+    },
+    LoginToAnother(id) {
+      this.loading = true
+
+      login_to_another({id: id}).then(r => {
+        console.log(r)
+        this.errored = !r
+        this.loading = false
+      }).catch(e => console.log(e))
+    },
+    FormatDate(date) {
+      return new Date(date).toLocaleString("de-DE", {
+        month: 'numeric',
+        year: 'numeric',
+        day: 'numeric',
+      })
+    },
+    ShowEdit(data) {
+      console.log(data)
+    },
+    PreparePagination(p) {
+      this.$refs.PaginationTemplate.page = p.current_page
+      this.$refs.PaginationTemplate.last_page = p.last_page
+      this.$refs.PaginationTemplate.results_info = `Результаты ${p.from}-${p.to} из ${p.total}`
+      this.$refs.PaginationTemplate.PrepareAvailablePages()
+    },
+  }
+}
+</script>

@@ -1,0 +1,24 @@
+Usings:
+Vue.js, Vite.js, Tailwind CSS, Axios, Flowbite
+
+
+Example:
+https://flowbite.com/docs/getting-started/vue/
+
+Installation:
+npm i vue@next
+npm i -D @vue/compiler-sfc
+
+npm create vite@latest
+npm init vite@latest [app-name] -- --template vue
+cd [app-name]
+npm i
+npm run dev
+
+Libraries installation:
+npm i -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+npm i vue-axios
+npm i flowbite
+npm i vue-router@next
+npm i @vuepic/vue-datepicker

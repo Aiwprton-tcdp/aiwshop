@@ -12,33 +12,39 @@
     </p>
   </div>
 
-  <div class="flex flex-col items-center">
-    <div class="flex flex-row gap-4 items-center">
-      <label>
-        <RouterLink :to="{ name: 'cart' }" class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
-          Корзина
-        </RouterLink>
-      </label>
-      <label>
-        <RouterLink :to="{ name: 'history', params: { id: user?.id ?? 0 } }" class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
-          История покупок
-        </RouterLink>
-      </label>
-      <label>
-        <RouterLink :to="{ name: 'send_reset_code' }" class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
-          Смена пароля
-        </RouterLink>
-      </label>
-      <!-- <button @click="SendMail()" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-        Send Mail
-      </button> -->
+  <div class="flex flex-col gap-3 justify-start">
+    <div v-for="s in socials" class="flex flex-row items-center space-x-6">
+      <p>{{ s.name }}: </p>
+      <div v-if="s.users_data.length > 0" v-for="sud in s.users_data" class="flex flex-col items-center">
+        <p>{{ sud.value }}</p>
+      </div>
+      <div v-else class="flex flex-col items-center">
+        <button class="text-green-400">
+          Добавить
+        </button>
+      </div>
     </div>
   </div>
     
   <div class="flex flex-row gap-4 items-center">
-    <div v-for="s in socials">
-      <p>{{ s.social.name }}</p>
-    </div>
+    <label>
+      <RouterLink :to="{ name: 'cart' }" class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
+        Корзина
+      </RouterLink>
+    </label>
+    <label>
+      <RouterLink :to="{ name: 'history', params: { id: user?.id ?? 0 } }" class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
+        История покупок
+      </RouterLink>
+    </label>
+    <label>
+      <RouterLink :to="{ name: 'send_reset_code' }" class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
+        Смена пароля
+      </RouterLink>
+    </label>
+    <!-- <button @click="SendMail()" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+      Send Mail
+    </button> -->
   </div>
 </div>
 </template>
@@ -47,6 +53,7 @@
 import { inject } from 'vue'
 import { RouterLink } from 'vue-router'
 import { DefaultDate } from '@/utils/DateFormatter.js'
+
 
 export default {
   name: 'Profile_Main',
@@ -69,8 +76,8 @@ export default {
   },
   mounted() {
     this.GetUserData()
-    // this.GetCart()
-    // this.GetSocials()
+    this.GetCart()
+    this.GetSocials()
   },
   methods: {
     GetUserData() {

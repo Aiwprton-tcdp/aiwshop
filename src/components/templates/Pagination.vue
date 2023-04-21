@@ -5,15 +5,13 @@
   <label>{{ this.results_info }}</label>
 
   <div :class="{ invisible: is_not_necessary }" class="inline-flex">
-    <input v-model="certain_page"
+    <input v-model.number="certain_page"
       type="number"
       @keyup.enter="Certain(certain_page)"
       class="w-16 p-2 text-sm rounded-lg bg-gray-50 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white" />
 
     <button @click="Certain(certain_page)" class="px-4 py-2 text-gray-500 border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-      <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-      </svg>
+      Перейти
     </button>
   </div>
   
@@ -31,7 +29,7 @@
           1
         </button>
       </li>
-      <li v-if="!this.available_pages.includes(1)">
+      <li v-if="!this.available_pages.includes(1) && !this.available_pages.includes(2)">
         <label class="px-3 py-2 inline-block align-center text-gray-900 dark:bg-gray-800 dark:text-gray-400">
           ...
         </label>
@@ -44,7 +42,7 @@
         </button>
       </li>
 
-      <li v-if="!this.available_pages.includes(this.last_page)">
+      <li v-if="!this.available_pages.includes(this.last_page) && !this.available_pages.includes(this.last_page - 1)">
         <label class="px-3 py-2 inline-block align-center text-gray-900 dark:bg-gray-800 dark:text-gray-400">
           ...
         </label>
@@ -61,6 +59,13 @@
       </li>
     </ul>
   </nav>
+
+  <!-- <label for="per_page_select" class="sr-only">На странице</label> -->
+  <select v-model="per_page_internal" v-on:change="First()" class="block py-2.5 px-0 w-16 text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+      <option value="10" selected>10</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+  </select>
 </div>
 </template>
 
@@ -73,7 +78,8 @@ export default {
       page: Number(),
       last_page: Number(),
       available_pages: Array(),
-      certain_page: Number(),
+      certain_page: Number(1),
+      per_page_internal: Number(10),
       results_info: String(),
       is_not_necessary: Boolean(),
     }
@@ -85,41 +91,41 @@ export default {
       this.is_not_necessary = count < 2
       if (this.is_not_necessary) return
 
-      const minus_current = count - 1
-      const half_mc = Math.floor(minus_current / 2)
-      const left = this.page < count ? 1 : this.page - minus_current
-      const right = this.page + minus_current < this.last_page
-        ? this.page + minus_current
+      const sum_without_current = count - 1
+      const left = this.page < count ? 1 : this.page - sum_without_current
+      const right = this.page + sum_without_current < this.last_page
+        ? this.page + sum_without_current
         : this.last_page
 
       let start = left
-      if (this.page - left >= half_mc && right - this.page >= half_mc) {
-        start = this.page - half_mc
-      } else if (right - this.page < half_mc && this.last_page > count) {
-        start = left + this.last_page - this.page
-      }
-      // const finish = start + 4 < this.last_page ? start + 4 : this.last_page
 
-      this.available_pages = Array.from(Array(count), (e, i) => i + start)
+      if (this.last_page < 5) {
+        start = 1
+      } else if (this.page - left >= 2 && right - this.page >= 2) {
+        start = this.page - 2
+      } else if (this.last_page - this.page <= 2) {
+        start = right - 4
+      }
+
+      this.available_pages = Array.from(Array(count), (_, i) => start + i)
+    },
+    Emit(p = this.page) {
+      this.$emit('invoke', p, this.per_page_internal)
     },
     Certain(page_number) {
       if (page_number < 1) page_number = 1
       else if (page_number > this.last_page) page_number = this.last_page
 
       this.page = page_number
-      this.$emit('invoke', this.page)
+      this.Emit()
     },
     Previous() {
       if (this.page <= 1) return
-
-      this.page--
-      this.$emit('invoke', this.page)
+      this.Emit(--this.page)
     },
     Next() {
       if (this.page >= this.last_page) return
-
-      this.page++
-      this.$emit('invoke', this.page)
+      this.Emit(++this.page)
     },
     First() {
       this.Certain(1)

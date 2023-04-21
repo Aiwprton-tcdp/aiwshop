@@ -11,7 +11,7 @@
 
   <!-- Filters main -->
   <div class="relative flex w-72">
-    <input v-model="search" id="salesSearchhButton" data-dropdown-toggle="salesSearch" type="search" autocomplete="off" class="w-full px-5 py-2.5 text-sm rounded-lg bg-gray-50 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white" placeholder="Найти по id" />
+    <input v-model.trim="search" id="salesSearchButton" data-dropdown-toggle="salesSearch" type="search" class="w-full px-5 py-2.5 text-sm rounded-lg bg-gray-50 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white searcher" placeholder="Введите по id" />
     <div class="absolute top-0 right-0 flex items-center px-4 py-2.5 space-x-1">
       <button @click="Search()">
         <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -27,7 +27,7 @@
 
 <!-- Filters additional -->
 <div id="salesSearch" class="absolute w-fit p-8 z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700">
-  <div aria-labelledby="salesSearchhButton">
+  <div aria-labelledby="salesSearchButton">
   <!-- class="flex w-full space-x-4 px-4"> -->
     <div class="w-56">
       <VueSimpleRangeSlider
@@ -72,15 +72,12 @@
     </thead>
     <tbody v-for="g in sales">
       <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-        <td class="px-6 py-4">
-          <!-- <RouterLink :to="{ name: 'good_edit', params: {id: g.id} }" class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
-            &#x270E;
-          </RouterLink> -->
+        <td scope="row" class="px-6 py-4 font-medium text-gray-900 dark:text-white">
           {{ g.id }}
           <span v-if="g.is_returned">-</span>
         </td>
-        <td class="px-6 py-4">{{ g.price }}</td>
-        <td class="px-6 py-4">{{ g.discount }}</td>
+        <td class="px-6 py-4">${{ g.price }}</td>
+        <td class="px-6 py-4">{{ g.discount }}%</td>
         <td class="px-6 py-4">{{ g.created_at }}</td>
       </tr>
     </tbody>
@@ -140,27 +137,18 @@ export default {
       this.search = this.search.trim()
       this.GetSales()
     },
-    GetSales(page = 1) {
-      // console.log(this.$route.params.id)
-
-      // if (this.$route.params.id > 0) {
-      //   this.ShowEdit(this.$route.params.id)
-      //   // return
-      // }
-
+    GetSales(page = 1, per_page_internal = 10) {
       this.loading = true
 
       let url = `sales?page=${page}
-        &limit=50`
+        &id=${this.search}
+        &min_price=${this.price_range[0]}
+        &max_price=${this.price_range[1]}
+        &limit=${per_page_internal}`
       
       this.ax.get(url).then(r => {
         let p = r.data.data
-        let data = p.data
-        // console.log(p)
-        // console.log(data)
-        // if (data.length == 0) return
-
-        this.sales = data
+        this.sales = p.data
         this.PreparePagination(p)
       }).catch(e => {
         console.log(e)

@@ -66,8 +66,20 @@ button:focus-visible {
 #app {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2rem 10rem;
   text-align: center;
+}
+
+.searcher[type=text]::-ms-clear, .searcher[type=text]::-ms-reveal {
+  display: none;
+  width : 0;
+  height: 0;
+}
+.searcher[type="search"]::-webkit-search-decoration,
+.searcher[type="search"]::-webkit-search-cancel-button,
+.searcher[type="search"]::-webkit-search-results-button,
+.searcher[type="search"]::-webkit-search-results-decoration {
+  display: none;
 }
 
 @media (prefers-color-scheme: light) {

@@ -6,7 +6,7 @@
   
   <div class="flex items-center">
     <a href="" class="flex text-white hover:text-gray-100 bg-green-400 hover:bg-green-500 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700">
-      <span class="font-bold">&#10010;&nbsp;&nbsp;</span>User
+      <span class="font-bold">&#10010;&nbsp;&nbsp;</span>Пользователь
     </a>
   </div>
 </div>
@@ -16,27 +16,25 @@
     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
       <tr>
         <th scope="col" class="px-6 py-3">Id</th>
-        <th scope="col" class="px-6 py-3">Nickname</th>
-        <th scope="col" class="px-6 py-3">Email</th>
-        <th scope="col" class="px-6 py-3">Rolename</th>
-        <th scope="col" class="px-6 py-3">Created at</th>
-        <th scope="col" class="px-6 py-3">Actions</th>
+        <th scope="col" class="px-6 py-3">Имя</th>
+        <th scope="col" class="px-6 py-3">Роль</th>
+        <th scope="col" class="px-6 py-3">Дата регистрации</th>
+        <th scope="col" class="px-6 py-3">Действия</th>
       </tr>
     </thead>
     <tbody v-for="u in users">
       <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-        <td class="px-6 py-4">
+        <td scope="row" class="px-6 py-4 font-medium text-gray-900 dark:text-white">
           <button @click="ShowEdit(u)">&#x270E;</button>
           {{ u.id }}
         </td>
         <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
           {{ u.name }}
         </td>
-        <td class="px-6 py-4">{{ u.email }}</td>
         <td class="px-6 py-4">{{ u.rolename }}</td>
         <td class="px-6 py-4">{{ u.created_at }}</td>
         <td class="px-6 py-4">
-          <button @click="LoginToAnother(u.id)">Auth</button>
+          <button @click="LoginToAnother(u.id)" class="text-blue-500">Авторизоваться</button>
         </td>
       </tr>
     </tbody>
@@ -79,10 +77,10 @@ export default {
     this.$refs.nav.data = ['Пользователи']
   },
   methods: {
-    GetUsers(page = 1) {
+    GetUsers(page = 1, per_page_internal = 10) {
       this.loading = true
 
-      this.ax.get(`users?page=${page}&limit=120`)
+      this.ax.get(`users?page=${page}&limit=${per_page_internal}`)
         .then(r => {
           let p = r.data.data
           this.users = p.data
@@ -100,13 +98,6 @@ export default {
         this.errored = !r
         this.loading = false
       }).catch(e => console.log(e))
-    },
-    FormatDate(date) {
-      return new Date(date).toLocaleString("de-DE", {
-        month: 'numeric',
-        year: 'numeric',
-        day: 'numeric',
-      })
     },
     ShowEdit(data) {
       console.log(data)

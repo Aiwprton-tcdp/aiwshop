@@ -14,6 +14,7 @@ import D_Users from '@/components/pages/dashboard/Users.vue'
 import D_Goods from '@/components/pages/dashboard/Goods.vue'
 import D_Sales from '@/components/pages/dashboard/Sales.vue'
 import D_Roles from '@/components/pages/dashboard/Roles.vue'
+import D_Charts from '@/components/pages/dashboard/Charts.vue'
 import D_Goods_Edit from '@/components/pages/dashboard/goods/Edit.vue'
 import D_Goods_Edit_Modal from '@/components/pages/dashboard/goods/modals/EditModal.vue'
 import D_Edit_Goods from '@/components/pages/dashboard/modals/EditGood.vue'
@@ -119,6 +120,11 @@ const routes = [
         path: 'roles',
         name: 'roles',
         component: D_Roles,
+      },
+      {
+        path: 'charts',
+        name: 'charts',
+        component: D_Charts,
       },
     ]
   },

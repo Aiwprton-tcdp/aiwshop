@@ -146,8 +146,6 @@ export default {
   },
   mounted() {
     this.$parent.returnUserData().then(() => {
-      console.log(this.UserData)
-      console.log(this.user)
       this.user = this.UserData
       this.isGuest = this.user == null
     })

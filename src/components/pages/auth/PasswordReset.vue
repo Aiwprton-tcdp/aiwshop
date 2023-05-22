@@ -26,29 +26,23 @@ export default {
   name: 'PasswordReset',
   data() {
     return {
-      new_password: '',
-      token: '',
+      new_password: String(),
+      token: String(),
     }
   },
   setup() {
-    const errored = inject('errored')
     const loading = inject('loading')
-    const UserData = inject('UserData')
-    const updateStatesData = inject('updateStatesData')
+    const toast = inject('createToast')
 
     return {
-      errored,
       loading,
-      UserData,
-      updateStatesData,
+      toast,
     }
   },
   methods: {
     GetToken() {
-      this.errored = false
-
       if (this.email == '') {
-        this.errored = true
+        this.toast('\'email\' is empty', 'error')
         return
       }
 
@@ -57,7 +51,7 @@ export default {
         password: this.new_password,
       }).then(r => {
         console.log(r.data.data)
-      }).catch(e => console.log(e))
+      }).catch(e => this.toast(e.message, 'error'))
     },
   }
 }

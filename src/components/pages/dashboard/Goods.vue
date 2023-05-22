@@ -12,7 +12,7 @@
 
   <!-- Filters main -->
   <div class="relative flex w-72">
-    <input v-model.trim="search" id="goodsSearchButton" data-dropdown-toggle="goodsSearch" type="search" class="w-full px-5 py-2.5 text-sm rounded-lg bg-gray-50 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white searcher" placeholder="Введите название или id" />
+    <input v-model.trim="search" @keypress.enter="Search()" id="goodsSearchButton" data-dropdown-toggle="goodsSearch" type="search" class="w-full px-5 py-2.5 text-sm rounded-lg bg-gray-50 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white searcher" placeholder="Введите название или id" />
     <div class="absolute top-0 right-0 flex items-center px-4 py-2.5 space-x-1">
       <button @click="Search()">
         <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -27,9 +27,10 @@
 </div>
 
 <!-- Filters additional -->
+<!-- https://codesandbox.io/s/mpklq49wp -->
+<!-- https://vue3datepicker.com/installation/ -->
 <div id="goodsSearch" class="absolute w-fit p-8 z-40 hidden bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700">
   <div aria-labelledby="goodsSearchButton">
-  <!-- class="flex w-full space-x-4 px-4"> -->
     <div class="w-56">
       <VueSimpleRangeSlider
           :min="0"
@@ -39,8 +40,6 @@
       </VueSimpleRangeSlider>
     </div>
     <div class="w-56 mt-20 z-100">
-      <!-- https://codesandbox.io/s/mpklq49wp -->
-      <!-- https://vue3datepicker.com/installation/ -->
       <div class="flex items-center space-x-3">
         <label>От: </label>
         <DatePicker v-model="begin_date" />
@@ -133,20 +132,18 @@ export default {
     }
   },
   setup() {
-    const errored = inject('errored')
     const loading = inject('loading')
-    const updateStatesData = inject('updateStatesData')
+    const toast = inject('createToast')
 
     return {
-      errored,
       loading,
-      updateStatesData,
+      toast,
     }
   },
   mounted() {
+    this.$refs.nav.data = ['Товары']
     this.SetFilterDefaults()
     this.Search()
-    this.$refs.nav.data = ['Товары']
   },
   methods: {
     SetFilterDefaults() {
@@ -172,8 +169,7 @@ export default {
         this.goods = p.data
         this.PreparePagination(p)
       }).catch(e => {
-        console.log(e)
-        this.errored = true
+        this.toast(e.response.data.message, 'error')
       }).finally(() => this.loading = false)
     },
     ShowEdit(id) {

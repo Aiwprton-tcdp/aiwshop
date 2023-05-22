@@ -9,6 +9,9 @@ import Profile from '@/components/pages/profile/Main.vue'
 import ShoppingCart from '@/components/pages/profile/Cart.vue'
 import PurchaseHistory from '@/components/pages/profile/History.vue'
 import Dashboard from '@/components/pages/Dashboard.vue'
+import Chats_Main from '@/components/pages/chat/Main.vue'
+import ChatsList from '@/components/pages/chat/List.vue'
+import ChatMessages from '@/components/pages/chat/Messages.vue'
 import D_Main from '@/components/pages/dashboard/Main.vue'
 import D_Users from '@/components/pages/dashboard/Users.vue'
 import D_Goods from '@/components/pages/dashboard/Goods.vue'
@@ -37,11 +40,8 @@ const routes = [
   },
   {
     path: '/users/:id',
-    redirect: { name: 'current_profile' },
     name: 'user',
-    // children: [
-    //   { path: 'profile', name: 'profile', component: Profile },
-    // ]
+    redirect: { name: 'current_profile' }
   },
   { path: '/users', redirect: { name: 'current_profile' } },
   { path: '/profile', redirect: { name: 'current_profile' } },
@@ -51,81 +51,35 @@ const routes = [
   { path: '/users/:id?/profile/cart', name: 'cart', component: ShoppingCart },
   { path: '/users/:id?/profile/purchase_history', name: 'history', component: PurchaseHistory },
   {
+    path: '/chats',
+    // redirect: '/chats/list',
+    name: 'chats',
+    component: Chats_Main,
+    redirect: { name: 'chats_list' },
+    children: [
+      // {
+      //   path: '', name: 'chats_main', component: Chats_Main
+      // },
+      // { path: '', name: 'chats_main', component: Chats_List },
+      { path: 'list', name: 'chats_list', component: ChatsList },
+      { path: ':id', name: 'chat', component: ChatMessages },
+    ]
+  },
+  {
     path: '/dashboard',
-    redirect: '/dashboard',
+    // redirect: '/dashboard',
     // redirect: '/dashboard/users',
     name: 'dashboard',
     component: Dashboard,
+    redirect: { name: 'dashboard_main' },
     children: [
-      {
-        path: '',
-        name: 'dashboard_main',
-        component: D_Main,
-      },
-      {
-        path: 'users',
-        name: 'users',
-        component: D_Users,
-      },
-      {
-        path: 'goods/:id',
-        name: 'good_edit',
-        component: D_Goods_Edit,
-      },
-      {
-        path: 'goods',
-        name: 'goods',
-        component: D_Goods,
-        children: [
-          // {
-          //   path: ':id',
-          //   name: 'good_edit_modal',
-          //   component: D_Goods_Edit_Modal,
-          //   props: true
-          // },
-          // {
-          //   path: ':id',
-          //   // name: { default: 'good_edit', in_page: 'good_edit_modal' },
-          //   components: { good_edit: D_Goods_Edit, good_edit_modal: D_Goods_Edit_Modal },
-          //   props: { good_edit: false, good_edit_modal: true }
-          // },
-          // {
-          //   path: ':id',
-          //   name: 'good_edit',
-          //   components: D_Goods_Edit,
-          // },
-          // {
-          //   path: ':id',
-          //   name: 'good_edit_modal',
-          //   components: D_Goods_Edit_Modal,
-          //   props: true
-          // },
-          // {
-          //   path: '/new',
-          //   component: D_Goods
-          // },
-          // {
-          //   path: '/:id',
-          //   name: 'edit_good',
-          //   component: EditGood,
-          // },
-        ]
-      },
-      {
-        path: 'sales',
-        name: 'sales',
-        component: D_Sales,
-      },
-      {
-        path: 'roles',
-        name: 'roles',
-        component: D_Roles,
-      },
-      {
-        path: 'charts',
-        name: 'charts',
-        component: D_Charts,
-      },
+      { path: '', name: 'dashboard_main', component: D_Main },
+      { path: 'users', name: 'users', component: D_Users, },
+      { path: 'goods/:id', name: 'good_edit', component: D_Goods_Edit },
+      { path: 'goods', name: 'goods', component: D_Goods },
+      { path: 'sales', name: 'sales', component: D_Sales },
+      { path: 'roles', name: 'roles', component: D_Roles },
+      { path: 'charts', name: 'charts', component: D_Charts },
     ]
   },
   // {

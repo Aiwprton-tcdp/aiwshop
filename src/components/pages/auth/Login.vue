@@ -27,31 +27,15 @@ export default {
   name: 'Login',
   data() {
     return {
-      name: '',
-      password: '',
-      token: '',
-    }
-  },
-  setup() {
-    const errored = inject('errored')
-    const loading = inject('loading')
-    const UserData = inject('UserData')
-    const updateStatesData = inject('updateStatesData')
-
-    return {
-      errored,
-      loading,
-      UserData,
-      updateStatesData,
+      name: String(),
+      password: String(),
+      token: String(),
     }
   },
   methods: {
     tryToLogin() {
-      this.errored = false
-
-      if (this.name == ''
-        || this.password == '') {
-        this.errored = true
+      if (this.name == '' || this.password == '') {
+        this.toast('\'name\' or \'password\' is empty', 'error')
         return
       }
 
@@ -61,11 +45,13 @@ export default {
         login: this.name,
         password: this.password,
       }).then(r => {
-        console.log(r)
-        this.errored = !r
+        if (!r) {
+          this.toast('\'name\' or \'password\' is empty', 'error')
+        }
+
         this.password = ''
         this.loading = false
-      }).catch(e => console.log(e))
+      }).catch(e => this.toast(e.message, 'error'))
     },
   }
 }

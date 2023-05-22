@@ -39,35 +39,29 @@ export default {
   name: 'Register',
   data() {
     return {
-      name: '',
-      social: '',
-      password: '',
-      check_agreement: false,
-      token: '',
+      name: String(),
+      social: String(),
+      password: String(),
+      check_agreement: Boolean(),
+      token: String(),
     }
   },
   setup() {
-    const errored = inject('errored')
     const loading = inject('loading')
-    const UserData = inject('UserData')
-    const updateStatesData = inject('updateStatesData')
+    const toast = inject('createToast')
 
     return {
-      errored,
       loading,
-      UserData,
-      updateStatesData,
+      toast,
     }
   },
   methods: {
     TryToRegister() {
-      this.errored = false
-
       if (this.name == ''
         || this.social == ''
         || this.password == ''
         || !this.check_agreement) {
-        this.errored = true
+        this.toast('validation required', 'error')
         return
       }
 
@@ -78,8 +72,10 @@ export default {
         social: this.social,
         password: this.password,
       }).then(r => {
-        console.log(r)
-        this.errored = !r
+        if (!r) {
+          this.toast('some data is incorrect', 'error')
+        }
+
         this.password = ''
         this.loading = false
       }).catch(e => console.log(e))

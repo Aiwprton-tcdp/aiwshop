@@ -50,12 +50,12 @@ export default {
     }
   },
   setup() {
-    const errored = inject('errored')
     const loading = inject('loading')
+    const toast = inject('createToast')
 
     return {
-      errored,
       loading,
+      toast,
     }
   },
   mounted: function() {
@@ -70,9 +70,8 @@ export default {
         .then(response => {
           let data = response.data.data
           this.roles = data
-        }).catch(error => {
-          console.log(error)
-          this.errored = true
+        }).catch(e => {
+          this.toast(e.response.data.message, 'error')
         }).finally(() => this.loading = false)
     },
   }

@@ -1,4 +1,4 @@
-<style scoped></style>
+<style></style>
 
 <template>
 <Navigation ref="nav" />
@@ -36,21 +36,21 @@
   </table>
   
   <div class="flex justify-between">
-  <div>
-    <span class="text-gray-900 dark:text-white">Сумма: ${{ sum }}</span>
-  </div>
-  
-  <div class="flex space-x-4">
-    <button @click="ReportGenerate()" class="text-blue-400">
-      Выгрузить отчёт
-    </button>
-    <button @click="DeleteAll()" class="text-red-600">
-      Очистить корзину
-    </button>
-    <button @click="GoToPay()" class="text-green-400">
-      Перейти к оплате
-    </button>
-  </div>
+    <div>
+      <span class="text-gray-900 dark:text-white">Сумма: ${{ sum }}</span>
+    </div>
+    
+    <div class="flex space-x-4">
+      <button @click="ReportGenerate()" class="text-blue-400">
+        Выгрузить отчёт
+      </button>
+      <button @click="DeleteAll()" class="text-red-600">
+        Очистить корзину
+      </button>
+      <button @click="GoToPay()" class="text-green-400">
+        Перейти к оплате
+      </button>
+    </div>
   </div>
 </div>
 </template>
@@ -73,16 +73,12 @@ export default {
     }
   },
   setup() {
-    const errored = inject('errored')
     const loading = inject('loading')
-    const UserData = inject('UserData')
-    const updateStatesData = inject('updateStatesData')
+    const toast = inject('createToast')
 
     return {
-      errored,
       loading,
-      UserData,
-      updateStatesData,
+      toast,
     }
   },
   mounted() {
@@ -93,7 +89,7 @@ export default {
     GetGoods() {
       this.loading = true
 
-      this.ax.get('carts').then(r => {
+      this.ax.get('cart').then(r => {
         this.goods = r.data.data
 
         if (this.goods.length == 0) {
@@ -103,8 +99,7 @@ export default {
 
         this.sum = this.goods.reduce((a, o) => a + Number(o.price), 0)
       }).catch(e => {
-        console.log(e)
-        this.errored = true
+        this.toast(e.response.data.message, 'error')
       }).finally(() => this.loading = false)
     },
     GetGoodsFromCookies() {
@@ -126,21 +121,19 @@ export default {
         this.goods = r.data.data.data
         this.sum = this.goods.reduce((a, o) => a + Number(o.price), 0)
       }).catch(e => {
-        console.log(e)
-        this.errored = true
+        this.toast(e.response.data.message, 'error')
       }).finally(() => this.loading = false)
     },
     Delete(id) {
       this.loading = true
 
-      this.ax.delete(`carts/${id}`).then(r => {
+      this.ax.delete(`cart/${id}`).then(r => {
         console.log(r)
         // this.goods = r.data.data
 
         this.DeleteFromCookies(id)
       }).catch(e => {
-        console.log(e)
-        this.errored = true
+        this.toast(e.response.data.message, 'error')
       }).finally(() => this.loading = false)
     },
     DeleteFromCookies(id) {
@@ -183,8 +176,7 @@ export default {
         console.log(r.data)
         this.downloadURI(r.data)
       }).catch(e => {
-        console.log(e)
-        this.errored = true
+        this.toast(e.response.data.message, 'error')
       }).finally(() => this.loading = false)
     },
     downloadURI(data) {

@@ -12,11 +12,12 @@
     </p>
   </div>
 
+  <!-- socials -->
   <div class="flex flex-col gap-3 justify-start">
     <div v-for="s in socials" class="flex flex-row items-center space-x-6">
       <p>{{ s.name }}: </p>
-      <div v-if="s.users_data.length > 0" v-for="sud in s.users_data" class="flex flex-col items-center">
-        <p>{{ sud.value }}</p>
+      <div v-if="s.users_data.length > 0" v-for="ud in s.users_data" class="flex flex-col items-center">
+        <p>{{ ud.value }}</p>
       </div>
       <div v-else class="flex flex-col items-center">
         <button class="text-green-400">
@@ -69,9 +70,11 @@ export default {
   },
   setup() {
     const UserData = inject('UserData')
+    const toast = inject('createToast')
 
     return {
       UserData,
+      toast,
     }
   },
   mounted() {
@@ -81,46 +84,32 @@ export default {
   },
   methods: {
     GetUserData() {
-      console.log(this.$route.params)
-      console.log(this.UserData)
       this.ax.get(`${this.$route.params.id ?? this.UserData.id}/profile`).then(r => {
         let p = r.data.data
         console.log(p)
         this.user = p
         // this.UserData = this.user
         // this.socials = p.social_data
-      }).catch(e => {
-        console.log(e)
-        this.errored = true
-      })
+      }).catch(e => this.toast(e.response.data.message, 'error'))
     },
     GetCart() {
       this.ax.get(`profile/cart`).then(r => {
         let p = r.data.data
         console.log(p)
         this.cart = p
-      }).catch(e => {
-        console.log(e)
-        this.errored = true
-      })
+      }).catch(e => this.toast(e.response.data.message, 'error'))
     },
     GetSocials() {
       this.ax.get(`profile/socials`).then(r => {
         let p = r.data.data
         console.log(p)
         this.socials = p
-      }).catch(e => {
-        console.log(e)
-        this.errored = true
-      })
+      }).catch(e => this.toast(e.response.data.message, 'error'))
     },
     SendMail() {
       this.ax.get('send-mail').then(r => {
         console.log(r)
-      }).catch(e => {
-        console.log(e)
-        this.errored = true
-      })
+      }).catch(e => this.toast(e.response.data.message, 'error'))
     },
     FormatDate(date) {
       return DefaultDate(date)

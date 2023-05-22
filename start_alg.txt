@@ -22,3 +22,11 @@ npm i vue-axios
 npm i flowbite
 npm i vue-router@next
 npm i @vuepic/vue-datepicker
+npm i vue-star-rating@next
+npm i --save vue-toastification@next
+npm i centrifuge
+npm i socket.io-client
+npm i laravel-echo
+npm install tiny-emitter --save
+
+icons: https://heroicons.com

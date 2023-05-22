@@ -62,19 +62,17 @@ export default {
     }
   },
   setup() {
-    const errored = inject('errored')
     const loading = inject('loading')
-    const updateStatesData = inject('updateStatesData')
+    const toast = inject('createToast')
 
     return {
-      errored,
       loading,
-      updateStatesData,
+      toast,
     }
   },
   mounted() {
-    this.GetUsers()
     this.$refs.nav.data = ['Пользователи']
+    this.GetUsers()
   },
   methods: {
     GetUsers(page = 1, per_page_internal = 10) {
@@ -85,9 +83,8 @@ export default {
           let p = r.data.data
           this.users = p.data
           this.PreparePagination(p)
-        }).catch(error => {
-          console.log(error)
-          this.errored = true
+        }).catch(e => {
+          this.toast(e.response.data.message, 'error')
         }).finally(() => this.loading = false)
     },
     LoginToAnother(id) {
@@ -97,7 +94,7 @@ export default {
         console.log(r)
         this.errored = !r
         this.loading = false
-      }).catch(e => console.log(e))
+      }).catch(e => this.toast(e.response.data.message, 'error'))
     },
     ShowEdit(data) {
       console.log(data)

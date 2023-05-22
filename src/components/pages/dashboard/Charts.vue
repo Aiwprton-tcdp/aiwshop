@@ -47,7 +47,7 @@ echarts.use([
   UniversalTransition
 ])
 
-
+// https://echarts.apache.org/examples/en/index.html#chart-type-line
 export default {
   name: 'D_Charts',
   components: {
@@ -58,7 +58,12 @@ export default {
   //     roles: Array(),
   //   }
   // },
-  mounted: function() {
+  setup() {
+    const toast = inject('createToast')
+
+    return { toast }
+  },
+  mounted() {
     this.$refs.nav.data = ['Диаграммы']
     this.InitChartRoles()
     this.InitChartPrices()
@@ -113,9 +118,7 @@ export default {
               }
             ]
           })
-        }).catch(error => {
-          console.log(error)
-        })
+        }).catch(e => this.toast(e.response.data.message, 'error'))
     },
     InitChartPrices() {
       let d = [];
@@ -173,7 +176,7 @@ export default {
               }
             ],
           })
-        }).catch(error => console.log(error))
+        }).catch(e => this.toast(e.response.data.message, 'error'))
     },
     InitChartSales() {
       let d = [], dates = [], avg_prices = [], counts = []
@@ -239,7 +242,7 @@ export default {
             },
             series: d
           })
-        }).catch(error => console.log(error))
+        }).catch(e => this.toast(e.response.data.message, 'error'))
     },
   }
 }

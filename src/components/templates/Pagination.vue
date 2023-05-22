@@ -128,9 +128,11 @@ export default {
       this.Emit(++this.page)
     },
     First() {
+      this.certain_page = 1
       this.Certain(1)
     },
     Last() {
+      this.certain_page = 1
       this.Certain(this.last_page)
     },
   },

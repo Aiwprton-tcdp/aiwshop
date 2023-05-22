@@ -17,9 +17,9 @@
   <Pagination ref="PaginationTemplate" @invoke="GetHistory" />
 </div>
 </template>
+
 <script>
 import { inject } from 'vue'
-import { RouterLink } from 'vue-router'
 import PurchaseCard from '@/components/templates/PurchaseCard.vue'
 import Pagination from '@/components/templates/Pagination.vue'
 import Navigation from '@/components/templates/Navigation.vue'
@@ -27,7 +27,6 @@ import Navigation from '@/components/templates/Navigation.vue'
 export default {
   name: 'Profile_History',
   components: {
-    RouterLink,
     PurchaseCard,
     Pagination,
     Navigation,
@@ -35,21 +34,15 @@ export default {
   data() {
     return {
       sales: Array(),
-      price_range: Array(),
-      search: String(),
     }
   },
   setup() {
-    const errored = inject('errored')
     const loading = inject('loading')
-    const UserData = inject('UserData')
-    const updateStatesData = inject('updateStatesData')
+    const toast = inject('createToast')
 
     return {
-      errored,
       loading,
-      UserData,
-      updateStatesData,
+      toast,
     }
   },
   mounted() {
@@ -74,8 +67,7 @@ export default {
         this.sales = data
         this.PreparePagination(p)
       }).catch(e => {
-        console.log(e)
-        this.errored = true
+        this.toast(e.response.data.message, 'error')
       }).finally(() => this.loading = false)
     },
     PreparePagination(p) {

@@ -13,7 +13,7 @@
   <div class="relative flex w-72">
     <input v-model.trim="search" id="salesSearchButton" data-dropdown-toggle="salesSearch" type="search" class="w-full px-5 py-2.5 text-sm rounded-lg bg-gray-50 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white searcher" placeholder="Введите по id" />
     <div class="absolute top-0 right-0 flex items-center px-4 py-2.5 space-x-1">
-      <button @click="Search()">
+      <button @click="GetSales()">
         <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
@@ -111,20 +111,18 @@ export default {
     }
   },
   setup() {
-    const errored = inject('errored')
     const loading = inject('loading')
-    const updateStatesData = inject('updateStatesData')
+    const toast = inject('createToast')
 
     return {
-      errored,
       loading,
-      updateStatesData,
+      toast,
     }
   },
   mounted() {
-    this.SetFilterDefaults()
-    this.Search()
     this.$refs.nav.data = ['Покупки']
+    this.SetFilterDefaults()
+    this.GetSales()
   },
   methods: {
     SetFilterDefaults() {
@@ -132,10 +130,6 @@ export default {
       this.min_price = 0
       this.max_price = 100
       this.price_range = [this.min_price, this.max_price]
-    },
-    Search() {
-      this.search = this.search.trim()
-      this.GetSales()
     },
     GetSales(page = 1, per_page_internal = 10) {
       this.loading = true
@@ -151,9 +145,8 @@ export default {
         this.sales = p.data
         this.PreparePagination(p)
       }).catch(e => {
-        console.log(e)
-        this.errored = true
-      }).finally(() => this.loading = false)
+          this.toast(e.response.data.message, 'error')
+        }).finally(() => this.loading = false)
     },
     PreparePagination(p) {
       this.$refs.PaginationTemplate.page = p.current_page

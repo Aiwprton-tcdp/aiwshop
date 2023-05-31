@@ -55,12 +55,9 @@ import { inject } from 'vue'
 import { RouterLink } from 'vue-router'
 import { DefaultDate } from '@/utils/DateFormatter.js'
 
-
 export default {
   name: 'Profile_Main',
-  components: {
-    RouterLink,
-  },
+  components: { RouterLink },
   data() {
     return {
       user: Object(),
@@ -72,10 +69,7 @@ export default {
     const UserData = inject('UserData')
     const toast = inject('createToast')
 
-    return {
-      UserData,
-      toast,
-    }
+    return { UserData, toast }
   },
   mounted() {
     this.GetUserData()

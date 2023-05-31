@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { hasToken, logout } from '@/utils/auth'
+import { hasToken, isAuthenticated, logout } from '@/utils/auth'
+
 import Goods from '@/components/pages/Goods.vue'
 import Login from '@/components/pages/auth/Login.vue'
 import Register from '@/components/pages/auth/Register.vue'
@@ -22,6 +23,8 @@ import D_Goods_Edit from '@/components/pages/dashboard/goods/Edit.vue'
 import D_Goods_Edit_Modal from '@/components/pages/dashboard/goods/modals/EditModal.vue'
 import D_Edit_Goods from '@/components/pages/dashboard/modals/EditGood.vue'
 
+// const AuthData = isAuthenticated
+
 const routes = [
   { path: '/', name: 'main', component: Goods },
   { path: '/login', name: 'login', component: Login },
@@ -33,8 +36,10 @@ const routes = [
     name: 'logout',
     component: {
       beforeRouteEnter(to, from, next) {
-        logout() ? next({ name: 'login' }) : next({ name: 'main' })
-        window.location.reload()
+        logout().then(() => {
+          next({ name: 'main' })
+          window.location.reload()
+        })
       }
     }
   },
@@ -95,11 +100,16 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const ht = hasToken()
+  const public_routes = ['login', 'register', 'send_reset_code', 'password_reset']
+  const routes_with_main = public_routes.concat(['main'])
+  // let y = AuthData.then(console.log)
+  // AuthData().then(console.log)
+  // console.log(AuthData.then(d => d))
 
-  if (ht && ['login', 'register', 'send_reset_code', 'password_reset'].includes(to.name)) {
+  if (ht && public_routes.includes(to.name)) {
     return next({ name: 'main' })
   }
-  else if (!ht && !['login', 'register', 'main', 'send_reset_code', 'password_reset'].includes(to.name)) {
+  else if (!ht && !routes_with_main.includes(to.name)) {
     return next({ name: 'main' })
   }
   // else if (!routes.map(({ name }) => name).includes(to.name)) {
@@ -109,4 +119,4 @@ router.beforeEach((to, from, next) => {
   next()
 })
 
-export default router;
+export default router

@@ -82,8 +82,8 @@
         <th scope="col" class="px-6 py-3">Дата создания</th>
       </tr>
     </thead>
-    <tbody v-for="g in goods">
-      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+    <tbody>
+      <tr v-for="g in goods" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
         <td scope="row" class="px-6 py-4 font-medium text-gray-900 dark:text-white">
           <RouterLink :to="{ name: 'good_edit', params: {id: g.id} }" class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
             &#x270E;
@@ -135,10 +135,7 @@ export default {
     const loading = inject('loading')
     const toast = inject('createToast')
 
-    return {
-      loading,
-      toast,
-    }
+    return { loading, toast }
   },
   mounted() {
     this.$refs.nav.data = ['Товары']

@@ -159,6 +159,7 @@ export default {
   mounted() {
     isAuthenticated().then(d => {
       this.User = this.UserData = d
+      if (d == null) return
       this.SocketStart()
     })
   },

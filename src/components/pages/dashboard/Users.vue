@@ -22,8 +22,8 @@
         <th scope="col" class="px-6 py-3">Действия</th>
       </tr>
     </thead>
-    <tbody v-for="u in users">
-      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+    <tbody>
+      <tr v-for="u in users" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
         <td scope="row" class="px-6 py-4 font-medium text-gray-900 dark:text-white">
           <button @click="ShowEdit(u)">&#x270E;</button>
           {{ u.id }}
@@ -52,10 +52,7 @@ import Pagination from '@/components/templates/Pagination.vue'
 
 export default {
   name: 'D_Users',
-  components: {
-    Navigation,
-    Pagination,
-  },
+  components: { Navigation, Pagination },
   data() {
     return {
       users: Array(),
@@ -65,10 +62,7 @@ export default {
     const loading = inject('loading')
     const toast = inject('createToast')
 
-    return {
-      loading,
-      toast,
-    }
+    return { loading, toast }
   },
   mounted() {
     this.$refs.nav.data = ['Пользователи']
@@ -88,12 +82,11 @@ export default {
         }).finally(() => this.loading = false)
     },
     LoginToAnother(id) {
-      this.loading = true
-
-      login_to_another({id: id}).then(r => {
+      login_to_another({ id: id }).then(r => {
         console.log(r)
         this.errored = !r
-        this.loading = false
+        this.$router.push({ name: 'main' })
+          window.location.reload()
       }).catch(e => this.toast(e.response.data.message, 'error'))
     },
     ShowEdit(data) {
